@@ -18,19 +18,17 @@ api-tests:
         reports: 
           junit: newman/report.xml
 
-# loadtest:
-#   stage: test
-#   image: 
-#     name: justb4/jmeter:latest
-#     entrypoint: [""]
-#   script:
-#     - mkdir -p testresults/jmeter
-#     - /entrypoint.sh -n -t ./korona.jmx -l ./korona.log -e -o ./testresults/jmeter
-#   artifacts:
-#     paths:
-#       - testresults/jmeter
-#     reports:
-#       load_performance: testresults/jmeter/statistics.json
+perf-test:
+  stage: test
+  image: 
+    name: justb4/jmeter:latest
+    entrypoint: [""]
+  script:
+    - mkdir -p testresults/jmeter
+    - /entrypoint.sh -n -t ./nehnutelnosti.jmx -l ./nehnutelnosti.log -e -o ./testresults/jmeter
+  artifacts:
+    paths:
+      - testresults/jmeter
 
 pages:
     stage: deploy_report
