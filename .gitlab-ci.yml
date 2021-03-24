@@ -1,0 +1,47 @@
+stages:
+    - test
+    - deploy_report
+
+api-tests:
+    stage: test
+    image:
+        name: postman/newman_alpine33:5.1.2
+        entrypoint: [""]
+    script:
+        - newman --version
+        - npm install -g newman-reporter-htmlextra
+        - newman run nehnutelnosti.json --reporters cli,junit,htmlextra --reporter-htmlextra-timezone "Europe/Bratislava" --reporter-htmlextra-export newman/report.html --reporter-junit-export newman/report.xml
+    artifacts:
+        when: always
+        paths:
+          - newman
+        reports: 
+          junit: newman/report.xml
+
+# loadtest:
+#   stage: test
+#   image: 
+#     name: justb4/jmeter:latest
+#     entrypoint: [""]
+#   script:
+#     - mkdir -p testresults/jmeter
+#     - /entrypoint.sh -n -t ./korona.jmx -l ./korona.log -e -o ./testresults/jmeter
+#   artifacts:
+#     paths:
+#       - testresults/jmeter
+#     reports:
+#       load_performance: testresults/jmeter/statistics.json
+
+pages:
+    stage: deploy_report
+    script:
+      - rm -rf testresults
+      - mv testresults/ public/
+      - mv newman/ public/
+      - echo 'done'
+    artifacts:
+      when: always
+      paths:
+        - public
+      expire_in: 1 day
+
